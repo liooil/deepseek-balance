@@ -1,71 +1,47 @@
-# deepseek-balance README
+# deepseek-balance
 
-This is the README for your extension "deepseek-balance". After writing up a brief description, we recommend including the following sections.
+Show your DeepSeek account balance in the VS Code status bar.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- Displays the current DeepSeek balance in the status bar.
+- Lets you configure the API key securely through VS Code secrets storage.
+- Supports periodic refresh with the `deepseekBalance.refreshIntervalMinutes` setting.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+This extension contributes the following setting:
 
-For example:
+- `deepseekBalance.refreshIntervalMinutes`: Refresh interval in minutes. Default: `10`.
 
-This extension contributes the following settings:
+## Automated Publishing
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+This repository includes a GitHub Actions workflow that can publish the extension to the VS Code Marketplace.
 
-## Known Issues
+### Required GitHub secrets
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Create these repository secrets before publishing:
 
-## Release Notes
+- `VSCE_PAT`: Personal Access Token created in the Visual Studio Marketplace publisher portal.
+- `VSCE_PUBLISHER`: Your Marketplace publisher ID.
 
-Users appreciate release notes as you update your extension.
+### Publish flow
 
-### 1.0.0
+The workflow file is `.github/workflows/publish.yml`.
 
-Initial release of ...
+- Push a tag like `v0.0.2` to publish automatically.
+- Or run the workflow manually from the GitHub Actions page.
+- The workflow builds the extension, packages a `.vsix`, publishes it to the Marketplace, and attaches the package to a GitHub Release when triggered by a tag.
 
-### 1.0.1
+### Versioning rule
 
-Fixed issue #.
+When publishing from a git tag, the tag version must match the `version` field in `package.json`.
 
-### 1.1.0
+## Local packaging
 
-Added features X, Y, and Z.
+You can package or publish locally with:
 
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+```bash
+npm run package:vsix
+npm run publish:vsce
+```
