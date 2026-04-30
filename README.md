@@ -12,6 +12,8 @@ Show your DeepSeek account balance in the VS Code status bar.
 
 This extension contributes the following setting:
 
+- `deepseekBalance.apiKeySource`: API key source selector. Options: `claudeConfig` / `config` / `secretKey`. Default: `claudeConfig`.
+- `deepseekBalance.apiKey`: API key used when `deepseekBalance.apiKeySource` is `config`.
 - `deepseekBalance.refreshIntervalMinutes`: Refresh interval in minutes. Default: `10`.
 
 ## Automated Publishing
@@ -42,6 +44,6 @@ When publishing from a git tag, the tag version must match the `version` field i
 You can package or publish locally with:
 
 ```bash
-npm run package:vsix
-npm run publish:vsce
+bun run package:vsix
+bun run publish:vsce
 ```

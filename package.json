@@ -12,7 +12,10 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./out/extension.js",
+  "extensionKind": [
+    "ui"
+  ],
+  "browser": "./out/web/extension.js",
   "contributes": {
     "commands": [
       {
@@ -23,30 +26,51 @@
         "command": "deepseek-balance.setApiKey",
         "title": "DeepSeek Balance: Set API Key"
       }
-    ]
-  },
-  "configuration": {
-    "properties": {
-      "deepseekBalance.refreshIntervalMinutes": {
-        "type": "number",
-        "default": 10
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "DeepSeek Balance",
+      "properties": {
+        "deepseekBalance.apiKeySource": {
+          "type": "string",
+          "default": "secretKey",
+          "enum": [
+            "secretKey",
+            "claudeConfig",
+            "config"
+          ],
+          "enumDescriptions": [
+            "Read API key from SecretStorage key named SECRET_KEY",
+            "Read API key from deepseekBalance.apiKey",
+            "Read API key from claudeCode.environmentVariables[name=ANTHROPIC_AUTH_TOKEN]"
+          ],
+          "description": "Choose where to read DeepSeek API key from"
+        },
+        "deepseekBalance.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "DeepSeek API key used when deepseekBalance.apiKeySource is set to config"
+        },
+        "deepseekBalance.refreshIntervalMinutes": {
+          "type": "number",
+          "default": 10
+        }
       }
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "bun run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "package:vsix": "npx @vscode/vsce package --allow-missing-repository --skip-license",
-    "publish:vsce": "npx @vscode/vsce publish --allow-missing-repository --skip-license",
-    "pretest": "npm run compile && npm run lint",
+    "package:vsix": "bun x @vscode/vsce package --allow-missing-repository --skip-license",
+    "publish:vsce": "bun x @vscode/vsce publish --allow-missing-repository --skip-license",
+    "pretest": "bun run compile && bun run lint",
     "lint": "eslint src",
     "test": "vscode-test"
   },
   "publisher": "liooil",
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "^22.19.17",
     "@types/vscode": "^1.118.0",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
