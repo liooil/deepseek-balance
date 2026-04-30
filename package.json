@@ -1,7 +1,7 @@
 {
   "name": "deepseek-balance",
   "displayName": "deepseek-balance",
-  "description": "Show DeepSeek balacnce in status bar",
+  "description": "Show DeepSeek balance in status bar",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.118.0"
@@ -9,15 +9,29 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "deepseek-balance.helloWorld",
-        "title": "Hello World"
+        "command": "deepseek-balance.refresh",
+        "title": "DeepSeek Balance: Refresh"
+      },
+      {
+        "command": "deepseek-balance.setApiKey",
+        "title": "DeepSeek Balance: Set API Key"
       }
     ]
+  },
+  "configuration": {
+    "properties": {
+      "deepseekBalance.refreshIntervalMinutes": {
+        "type": "number",
+        "default": 10
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -28,13 +42,13 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.118.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "22.x",
-    "typescript-eslint": "^8.56.1",
+    "@types/node": "^22.19.17",
+    "@types/vscode": "^1.118.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
     "eslint": "^9.39.3",
     "typescript": "^5.9.3",
-    "@vscode/test-cli": "^0.0.12",
-    "@vscode/test-electron": "^2.5.2"
+    "typescript-eslint": "^8.56.1"
   }
 }
