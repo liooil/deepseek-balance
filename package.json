@@ -2,7 +2,7 @@
   "name": "deepseek-balance",
   "displayName": "deepseek-balance",
   "description": "Show DeepSeek balance in status bar",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.118.0"
   },
