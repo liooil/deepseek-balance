@@ -4,6 +4,8 @@
 src/**
 .gitignore
 .yarnrc
+bun.lock
+node_modules
 vsc-extension-quickstart.md
 **/tsconfig.json
 **/eslint.config.mjs

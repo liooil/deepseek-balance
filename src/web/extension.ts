@@ -30,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   statusItem.command = "deepseekBalance.refresh";
-  statusItem.text = "$(credit-card) DeepSeek";
+  statusItem.text = "$(credit-card)";
   statusItem.tooltip = "DeepSeek balance";
   statusItem.show();
 
@@ -157,14 +157,14 @@ async function refreshBalance() {
   const apiKey = await getDeepSeekApiKey();
 
   if (!apiKey) {
-    statusItem.text = "$(key) DeepSeek: No Key";
+    statusItem.text = "$(key) No Key";
     statusItem.command = "deepseekBalance.openSettings";
     statusItem.tooltip = getNoKeyTooltip();
     return;
   }
 
   statusItem.command = "deepseekBalance.refresh";
-  statusItem.text = "$(sync~spin) DeepSeek";
+  statusItem.text = "$(sync~spin)";
   statusItem.tooltip = "Refreshing DeepSeek balance...";
 
   try {
@@ -188,7 +188,7 @@ async function refreshBalance() {
       data.balance_infos[0];
 
     if (!balance) {
-      statusItem.text = "$(warning) DeepSeek: N/A";
+      statusItem.text = "$(warning) N/A";
       statusItem.tooltip = "DeepSeek returned no balance info.";
       return;
     }
@@ -202,7 +202,8 @@ async function refreshBalance() {
       ? "$(warning)"
       : "$(credit-card)";
 
-    statusItem.text = `${icon} DeepSeek: ${balance.total_balance} ${balance.currency}`;
+    const currencySymbol = balance.currency === "USD" ? "$" : "¥";
+  statusItem.text = `${icon} ${currencySymbol}${balance.total_balance}`;
 
     statusItem.tooltip =
       `DeepSeek Balance\n\n` +
@@ -212,7 +213,7 @@ async function refreshBalance() {
       `Topped up: ${balance.topped_up_balance} ${balance.currency}\n\n` +
       `Click to refresh.`;
   } catch (error) {
-    statusItem.text = "$(error) DeepSeek";
+    statusItem.text = "$(error)";
     statusItem.tooltip =
       `Failed to fetch DeepSeek balance.\n\n` +
       `${String(error)}\n\n` +
