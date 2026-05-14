@@ -24,9 +24,18 @@
       },
       {
         "command": "deepseek-balance.setApiKey",
-        "title": "DeepSeek Balance: Set API Key"
+        "title": "DeepSeek Balance: Setup API Key"
       }
     ],
+    "menus": {
+      "statusBar/item/context": [
+        {
+          "command": "deepseek-balance.setApiKey",
+          "when": "statusBarItem == deepseekBalance.statusItem",
+          "group": "navigation"
+        }
+      ]
+    },
     "configuration": {
       "type": "object",
       "title": "DeepSeek Balance",
@@ -36,8 +45,8 @@
           "default": "secretKey",
           "enum": [
             "secretKey",
-            "claudeConfig",
-            "config"
+            "config",
+            "claudeConfig"
           ],
           "enumDescriptions": [
             "Read API key from SecretStorage key named SECRET_KEY",

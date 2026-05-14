@@ -6,7 +6,15 @@ Show your DeepSeek account balance in the VS Code status bar.
 
 - Displays the current DeepSeek balance in the status bar.
 - Lets you configure the API key securely through VS Code secrets storage.
+- Provides a guided command to choose API key source and optionally update the key.
 - Supports periodic refresh with the `deepseekBalance.refreshIntervalMinutes` setting.
+
+## Guided Setup
+
+- Run command `DeepSeek Balance: Setup API Key (Guided)` from Command Palette.
+- Or right-click the DeepSeek status bar item and choose the guided setup command.
+- The wizard asks for source first (`claudeConfig` / `config` / `secretKey`), then asks API key input.
+- Leave API key input blank to keep existing value for the selected source.
 
 ## Extension Settings
 

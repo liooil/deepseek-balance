@@ -25,9 +25,11 @@ export function activate(context: vscode.ExtensionContext) {
   extensionContext = context;
 
   statusItem = vscode.window.createStatusBarItem(
+    "deepseekBalance.statusItem",
     vscode.StatusBarAlignment.Right,
     100
   );
+  statusItem.name = "DeepSeek Balance";
 
   statusItem.command = "deepseekBalance.refresh";
   statusItem.text = "$(credit-card)";
@@ -43,10 +45,22 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("deepseekBalance.openSettings", async () => {
+    vscode.commands.registerCommand("deepseek-balance.refresh", async () => {
+      await refreshBalance();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("deepseek-balance.setApiKey", async () => {
+      await runApiKeySetupWizard();
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("deepseek-balance.openSettings", async () => {
       const source = getApiKeySource();
       const query = source === "claudeConfig"
-        ? "claudeCode.environmentVariables"
+        ? "claudeConfig.environmentVariables"
         : "deepseekBalance.apiKeySource";
 
       await vscode.commands.executeCommand(
@@ -150,7 +164,110 @@ function getNoKeyTooltip(): string {
     return "No DeepSeek API key found.\n\nExpected secret key:\nSECRET_KEY";
   }
 
-  return "No DeepSeek API key found.\n\nExpected:\nclaudeCode.environmentVariables.ANTHROPIC_AUTH_TOKEN";
+  return "No DeepSeek API key found.\n\nExpected:\nclaudeCode.environmentVariables[name=ANTHROPIC_AUTH_TOKEN]";
+}
+
+async function setClaudeConfigApiKey(apiKey: string): Promise<void> {
+  const claudeConfig = vscode.workspace.getConfiguration("claudeCode");
+  const envs = [
+    ...(claudeConfig.get<ClaudeCodeEnvironmentVariables>("environmentVariables") ?? [])
+  ];
+
+  const targetName = "ANTHROPIC_AUTH_TOKEN";
+  const targetIndex = envs.findIndex((env) => env.name === targetName);
+
+  if (targetIndex >= 0) {
+    envs[targetIndex] = { ...envs[targetIndex], value: apiKey };
+  } else {
+    envs.push({ name: targetName, value: apiKey });
+  }
+
+  await claudeConfig.update(
+    "environmentVariables",
+    envs,
+    vscode.ConfigurationTarget.Global
+  );
+}
+
+async function setApiKeyToSelectedSource(
+  source: ApiKeySource,
+  apiKey: string
+): Promise<void> {
+  const deepseekConfig = vscode.workspace.getConfiguration("deepseekBalance");
+
+  if (source === "claudeConfig") {
+    await setClaudeConfigApiKey(apiKey);
+    return;
+  }
+
+  if (source === "config") {
+    await deepseekConfig.update("apiKey", apiKey, vscode.ConfigurationTarget.Global);
+    return;
+  }
+
+  await extensionContext.secrets.store("SECRET_KEY", apiKey);
+}
+
+async function runApiKeySetupWizard(): Promise<void> {
+  const picked = await vscode.window.showQuickPick(
+    [
+      {
+        label: "From claudeConfig",
+        description: "claudeCode.environmentVariables[name=ANTHROPIC_AUTH_TOKEN]",
+        source: "claudeConfig" as ApiKeySource
+      },
+      {
+        label: "From config",
+        description: "deepseekBalance.apiKey",
+        source: "config" as ApiKeySource
+      },
+      {
+        label: "From SECRET_KEY",
+        description: "SecretStorage key: SECRET_KEY",
+        source: "secretKey" as ApiKeySource
+      }
+    ],
+    {
+      title: "DeepSeek API Key Source",
+      placeHolder: "Choose where to read API key"
+    }
+  );
+
+  if (!picked) {
+    return;
+  }
+
+  const deepseekConfig = vscode.workspace.getConfiguration("deepseekBalance");
+  await deepseekConfig.update(
+    "apiKeySource",
+    picked.source,
+    vscode.ConfigurationTarget.Global
+  );
+
+  const apiKeyInput = await vscode.window.showInputBox({
+    title: "DeepSeek API Key",
+    prompt: "Enter API key for selected source (leave blank to keep)",
+    password: true,
+    ignoreFocusOut: true,
+    placeHolder: "sk-..."
+  });
+
+  if (apiKeyInput === undefined) {
+    await refreshBalance();
+    return;
+  }
+
+  const nextApiKey = apiKeyInput.trim();
+  if (nextApiKey) {
+    await setApiKeyToSelectedSource(picked.source, nextApiKey);
+  }
+
+  await refreshBalance();
+
+  const savedHint = nextApiKey ? "API key updated." : "Kept existing API key.";
+  void vscode.window.showInformationMessage(
+    `DeepSeek source set to ${picked.source}. ${savedHint}`
+  );
 }
 
 async function refreshBalance() {
