@@ -19,18 +19,18 @@
   "contributes": {
     "commands": [
       {
-        "command": "deepseek-balance.refresh",
+        "command": "deepseekBalance.refresh",
         "title": "DeepSeek Balance: Refresh"
       },
       {
-        "command": "deepseek-balance.setApiKey",
+        "command": "deepseekBalance.setApiKey",
         "title": "DeepSeek Balance: Setup API Key"
       }
     ],
     "menus": {
       "statusBar/item/context": [
         {
-          "command": "deepseek-balance.setApiKey",
+          "command": "deepseekBalance.setApiKey",
           "when": "statusBarItem == deepseekBalance.statusItem",
           "group": "navigation"
         }

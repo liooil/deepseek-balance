@@ -45,19 +45,13 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("deepseek-balance.refresh", async () => {
-      await refreshBalance();
-    })
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand("deepseek-balance.setApiKey", async () => {
+    vscode.commands.registerCommand("deepseekBalance.setApiKey", async () => {
       await runApiKeySetupWizard();
     })
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("deepseek-balance.openSettings", async () => {
+    vscode.commands.registerCommand("deepseekBalance.openSettings", async () => {
       const source = getApiKeySource();
       const query = source === "claudeConfig"
         ? "claudeConfig.environmentVariables"
